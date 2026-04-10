@@ -1,28 +1,35 @@
 # BunnyChat — Role-play AI Chat API
 
 A multi-user role-play AI chat API running on **[Bunny.net Edge Scripting](https://bunny.net?ref=u5whp75240)**,
-powered by **[OpenRouter](https://openrouter.ai/)** (multi-model with fallback) and **[Turso libsql](https://turso.tech)** database.
+powered by **[OpenRouter](https://openrouter.ai/)** (multi-model with fallback) and **[Bunny.net](https://bunny.net?ref=u5whp75240) libsql** database.
 
-<a href="https://bunny.net?ref=u5whp75240">
-  <img src="https://i.ibb.co.com/Vc6sr05T/Enteprise-Grade-AD-1200-x-628-Dark.png" width="200" />
+<a href="https://bunny.net?ref=u5whp75240" rel="sponsored" target="_blank">
+  <img src="https://i.ibb.co.com/Vc6sr05T/Enteprise-Grade-AD-1200-x-628-Dark.png" width="200" alt="Link to Bunny.net"/>
 </a>
 
+<a href="https://openrouter.ai/" rel="sponsored" target="_blank">
+  <img src="https://i.ibb.co.com/rGrZ3Rpp/opengraph-image-1wirky.png" width="200" alt="Link to OpenRouter.ai"/>
+</a>
 
-**Vibe Code Alert**<br>
+---
+
+⚠️ **Vibe Code Alert**<br>
 This project is intended solely as a Proof of Concept and Just for Fun. The code within this project is the result of Vibe Coding and reflects the Author’s limitations in the programming language used. As such, the implementation may not adhere to best practices or established development standards.
 
-However, the ideas, concepts, features, and workflows presented here are entirely the result of the Author’s own thinking and design.
+However, the ideas, concepts, features, and workflows presented here are entirely the result of the Author’s knowledge and experience as an app developer.
 
 Therefore, this project is not recommended for production use. It may contain bugs, exhibit an unstructured or inconsistent architecture, and its security and performance have not been thoroughly tested or validated.
 
+---
+
 <table>
   <tr>
-    <td><img src="https://i.ibb.co.com/Kz7Svxbg/Screen-Shot-2026-04-10-at-17-17-13.png" width="400"/></td>
-    <td><img src="https://i.ibb.co.com/d4kM246f/Screen-Shot-2026-04-10-at-17-15-36.png" width="400"/></td>
+    <td><img src="https://i.ibb.co.com/Kz7Svxbg/Screen-Shot-2026-04-10-at-17-17-13.png" width="600"/></td>
+    <td><img src="https://i.ibb.co.com/d4kM246f/Screen-Shot-2026-04-10-at-17-15-36.png" width="600"/></td>
   </tr>
   <tr>
-    <td><img src="https://i.ibb.co.com/JWpLQhDT/Screen-Shot-2026-04-10-at-17-03-38.png" width="400"/></td>
-    <td><img src="https://i.ibb.co.com/gZLbZBqK/Screen-Shot-2026-04-10-at-17-09-45.png" width="400"/></td>
+    <td><img src="https://i.ibb.co.com/JWpLQhDT/Screen-Shot-2026-04-10-at-17-03-38.png" width="600"/></td>
+    <td><img src="https://i.ibb.co.com/gZLbZBqK/Screen-Shot-2026-04-10-at-17-09-45.png" width="600"/></td>
   </tr>
 </table>
 
@@ -250,7 +257,11 @@ turso db create bunnychat
 turso db show bunnychat           # copy the URL
 turso db tokens create bunnychat  # copy the token
 ```
-
+#### If using Bunny.net Database
+1. Go to [Bunny Dashboard](https://dash.bunny.net?ref=u5whp75240) → **Database** → **Add Database**
+2. Name it `bunnychat`
+3. Copy or download the **Database access information** (URL and access tokens)
+4. Finish
 ---
 
 ### 2. Create Tables
@@ -603,15 +614,15 @@ Returns the current persona configuration.
 ```json
 {
   "persona": {
-    "name": "Sakura",
-    "image": "https://example.com/sakura.jpg",
+    "name": "Misa",
+    "image": "https://example.com/misa.jpg",
     "sex": "female",
     "age": 22,
     "personality": "cute,shy,cheerful",
     "likes": "anime,cats,matcha",
     "dislikes": "loud noises,spicy food",
     "specialization": "japanese culture,anime,manga",
-    "prompt": "You are Sakura, a 22-year-old female AI companion..."
+    "prompt": "You are Misa, a 22-year-old female AI companion..."
   }
 }
 ```
@@ -626,8 +637,8 @@ The `prompt` is automatically rebuilt from the merged fields.
 **Request:**
 ```json
 {
-  "name": "Sakura",
-  "image": "https://example.com/sakura.jpg",
+  "name": "Misa",
+  "image": "https://example.com/misa.jpg",
   "sex": "female",
   "age": 22,
   "personality": "cute,shy,cheerful",
@@ -663,8 +674,8 @@ The `prompt` is automatically rebuilt from the merged fields.
 {
   "ok": true,
   "persona": {
-    "name": "Sakura",
-    "prompt": "You are Sakura, a 22-year-old female AI companion..."
+    "name": "Misa",
+    "prompt": "You are Misa, a 22-year-old female AI companion..."
   }
 }
 ```
@@ -1214,14 +1225,14 @@ curl -X PUT $BASE/persona \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "name":"Sakura",
+    "name":"Misa",
     "sex":"female",
     "age":22,
     "personality":"cute,shy,cheerful",
     "likes":"anime,cats,matcha",
     "dislikes":"loud noises,spicy food",
     "specialization":"japanese culture,anime,manga",
-    "image":"https://example.com/sakura.jpg"
+    "image":"https://example.com/misa.jpg"
   }'
 
 # Update one field only
@@ -2168,7 +2179,7 @@ This is handled automatically by `sanitizeReplyFields()`. If it still happens:
 curl -X PUT $BASE/persona \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Sakura"}'
+  -d '{"name":"Misa"}'
 # Re-saving the persona rebuilds the prompt with latest format rules
 ```
 
@@ -2812,10 +2823,10 @@ Navigate to **Persona** in the sidebar.
 
 | Field | Description | Example |
 |-------|-------------|---------|
-| **Name** | The AI character's name | `Sakura` |
+| **Name** | The AI character's name | `Misa` |
 | **Sex** | Gender — affects pronouns in the system prompt | `female` |
 | **Age** | Character age *(1–999)* | `22` |
-| **Image URL** | Optional character avatar *(leave empty to clear)* | `https://…/sakura.jpg` |
+| **Image URL** | Optional character avatar *(leave empty to clear)* | `https://…/misa.jpg` |
 | **Personality** | Comma-separated traits | `cute,shy,cheerful` |
 | **Likes** | Comma-separated interests | `anime,cats,matcha` |
 | **Dislikes** | Comma-separated dislikes | `loud noises,spicy food` |
@@ -3068,3 +3079,17 @@ Tap anywhere on the dark overlay outside the sidebar to close it.
 
 **Requires:** `fetch`, `localStorage`, CSS custom properties, `async/await`
 — all available in any modern browser released after 2021.
+
+---
+
+## Final Notes for Implementation and Improvement
+
+If you plan to adapt or build upon this project, there are several areas where you can further enhance performance, scalability, and user trust.
+
+First, consider leveraging a **Vector Database** instead of (or alongside) a conventional relational database. Vector DBs are particularly effective for handling semantic search, similarity matching, and AI-driven features, making them a strong fit for modern intelligent applications.
+
+To improve system responsiveness, integrating **Redis** as a caching layer is highly recommended. Caching frequently accessed data or computation results can significantly reduce latency and server load, especially in high-traffic scenarios.
+
+From a privacy and control standpoint, developers are encouraged to host AI models on their own infrastructure whenever feasible. Running models on private servers not only helps safeguard user data but also provides greater flexibility in tuning performance, managing costs, and customizing behavior.
+
+Ultimately, the best implementation will depend on your specific use case, scale, and constraints—but combining these approaches can lead to a more robust, efficient, and trustworthy system.
