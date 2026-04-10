@@ -1976,6 +1976,18 @@ POST /chat { message: "Tell me about Naruto's chakra" }
 - ✅ Structured logging with request IDs and timing
 ---
 
+### Current AI issues
+
+- The AI ​​is too focused on its area of ​​specialization in conversation.
+- The AI is too rigid for its specific specialty, making it unsuitable for small talk, general/basic social chats, and even for casual conversation.
+- The AI does not know the current date, time, and basic human/social knowledge.
+- The AI does not store knowledge directly provided by users in conversations. He/she just remember it in the current chat session only.
+- The AI ​​lacks initiative to ask questions to the User, tell something about his/her day, what he/she knows, and other random things, so that the AI ​​becomes more human.
+
+Make system prompt adjustments for the AI or function calls to fix the issues and suit to your needs.
+
+---
+
 ## Troubleshooting
 
 ### Script returns HTTP 400 with empty body
