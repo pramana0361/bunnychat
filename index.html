@@ -1,0 +1,2993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BunnyChat</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #21253a;
+            --surface3: #2a2f45;
+            --border: #2e334d;
+            --accent: #6c63ff;
+            --accent-h: #5a52e0;
+            --accent2: #ff6b9d;
+            --text: #e8eaf6;
+            --muted: #7b82a8;
+            --dim: #4a5080;
+            --success: #4caf84;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b9eff;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, .5);
+            --sidebar-w: 260px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* ── Utility ── */
+        .hidden {
+            display: none !important;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .col {
+            flex-direction: column;
+        }
+
+        .gap-1 {
+            gap: 4px;
+        }
+
+        .gap-2 {
+            gap: 8px;
+        }
+
+        .gap-3 {
+            gap: 12px;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        .center {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mt-1 {
+            margin-top: 6px;
+        }
+
+        .mt-2 {
+            margin-top: 12px;
+        }
+
+        .mt-3 {
+            margin-top: 20px;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+        .btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-h);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--surface2);
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .icon-btn.danger:hover {
+            background: #ef444422;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* ── Inputs ── */
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .field .hint {
+            font-size: 11px;
+            color: var(--dim);
+        }
+
+        input,
+        textarea,
+        select {
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            width: 100%;
+            transition: border-color .18s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--dim);
+        }
+
+        textarea {
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        select option {
+            background: var(--surface3);
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .card+.card {
+            margin-top: 14px;
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 14px;
+        }
+
+        /* ── Toast ── */
+        #toasts {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            max-width: 340px;
+            pointer-events: all;
+            box-shadow: var(--shadow);
+            animation: tIn .2s ease;
+            border-left: 3px solid;
+        }
+
+        .toast.ok {
+            background: #1a2f27;
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .toast.err {
+            background: #2f1a1a;
+            border-color: var(--danger);
+            color: #fca5a5;
+        }
+
+        .toast.inf {
+            background: #1a2240;
+            border-color: var(--info);
+            color: var(--info);
+        }
+
+        .toast.wrn {
+            background: #2d2310;
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .toast-x {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: inherit;
+            opacity: .6;
+            font-size: 14px;
+            margin-left: auto;
+            padding: 0;
+        }
+
+        .toast-x:hover {
+            opacity: 1;
+        }
+
+        @keyframes tIn {
+            from {
+                transform: translateX(30px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes tOut {
+            to {
+                transform: translateX(30px);
+                opacity: 0;
+            }
+        }
+
+        /* ── Modal ── */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .65);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn .15s ease;
+        }
+
+        .overlay.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 26px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow);
+            animation: scIn .15s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-lg {
+            max-width: 580px;
+        }
+
+        @keyframes scIn {
+            from {
+                transform: scale(.96);
+                opacity: 0;
+            }
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .modal-head h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 18px;
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .modal-foot {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        /* ── Confirm ── */
+        #confirm-overlay .modal {
+            max-width: 360px;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .confirm-text {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        /* ── Setup / Auth screens ── */
+        .center-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .auth-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .brand .icon {
+            font-size: 40px;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .brand p {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 9px;
+            text-align: center;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: all .18s;
+        }
+
+        .tab.on {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .auth-form.on {
+            display: flex;
+        }
+
+        /* ── App shell ── */
+        #app {
+            display: flex;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #app.hidden {
+            display: none;
+        }
+
+        /* ── Sidebar ── */
+        #sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .sb-top {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .sb-logo {
+            font-size: 20px;
+        }
+
+        .sb-title {
+            font-size: 15px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .credits-pill {
+            background: var(--surface3);
+            color: var(--warning);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .new-btn {
+            margin: 10px;
+            padding: 9px;
+            background: var(--accent);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background .18s;
+            flex-shrink: 0;
+        }
+
+        .new-btn:hover {
+            background: var(--accent-h);
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 4px 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 11px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .15s;
+        }
+
+        .nav-item:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .nav-item.on {
+            background: var(--surface3);
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 5px 8px;
+        }
+
+        .sb-label {
+            padding: 6px 12px 3px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar session list */
+        .sb-sessions {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2px 8px 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .sb-session {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 12px;
+            transition: all .15s;
+        }
+
+        .sb-session:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .sb-session.on {
+            background: var(--surface3);
+            color: var(--text);
+        }
+
+        .sb-session-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sb-session-acts {
+            display: none;
+            gap: 2px;
+        }
+
+        .sb-session:hover .sb-session-acts {
+            display: flex;
+        }
+
+        .sb-act {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 11px;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .sb-act:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        /* Sidebar footer */
+        .sb-foot {
+            padding: 8px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .user-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 9px;
+            border-radius: var(--radius-sm);
+            cursor: default;
+        }
+
+        .ava-sm {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--surface3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .ava-sm img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .u-name {
+            font-size: 12px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .u-email {
+            font-size: 10px;
+            color: var(--muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sb-foot-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            margin-bottom: 6px;
+        }
+
+        /* ── Main ── */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .view.on {
+            display: flex;
+        }
+
+        /* ── Page header ── */
+        .page-head {
+            padding: 16px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            gap: 10px;
+        }
+
+        .page-head h2 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .page-head p {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .page-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* ── Chat ── */
+        .chat-head {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .chat-head-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-head-title {
+            font-size: 14px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chat-head-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .chat-head-acts {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .chat-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .empty-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            padding: 40px;
+            color: var(--muted);
+        }
+
+        .empty-chat .ei {
+            font-size: 52px;
+            opacity: .35;
+        }
+
+        .empty-chat h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .empty-chat p {
+            font-size: 13px;
+            color: var(--dim);
+            max-width: 280px;
+        }
+
+        .msg-row {
+            display: flex;
+            gap: 10px;
+            max-width: 760px;
+            width: 100%;
+        }
+
+        .msg-row.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .msg-row.assistant {
+            align-self: flex-start;
+        }
+
+        .msg-ava {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--surface3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            overflow: hidden;
+        }
+
+        .msg-ava img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .msg-body {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-width: calc(100% - 46px);
+        }
+
+        .msg-actions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .act-chip {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            padding: 2px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .msg-bubble {
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.65;
+            word-break: break-word;
+        }
+
+        .msg-row.user .msg-bubble {
+            background: var(--surface2);
+            border-bottom-right-radius: 3px;
+        }
+
+        .msg-row.assistant .msg-bubble {
+            background: #1e2340;
+            border-bottom-left-radius: 3px;
+        }
+
+        .msg-meta {
+            font-size: 10px;
+            color: var(--dim);
+            display: flex;
+            gap: 6px;
+        }
+
+        .msg-row.user .msg-meta {
+            justify-content: flex-end;
+        }
+
+        .typing-row {
+            display: flex;
+            gap: 10px;
+            align-self: flex-start;
+        }
+
+        .typing-bubble {
+            background: #1e2340;
+            border-radius: 14px;
+            border-bottom-left-radius: 3px;
+            padding: 12px 16px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            background: var(--muted);
+            border-radius: 50%;
+            animation: bounce 1.1s infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: .18s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: .36s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(1)
+            }
+
+            40% {
+                transform: scale(1.45)
+            }
+        }
+
+        .chat-foot {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .chat-ta {
+            flex: 1;
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            min-height: 42px;
+            max-height: 110px;
+            line-height: 1.5;
+            transition: border-color .18s;
+        }
+
+        .chat-ta:focus {
+            border-color: var(--accent);
+        }
+
+        .chat-ta::placeholder {
+            color: var(--dim);
+        }
+
+        .send-btn {
+            width: 42px;
+            height: 42px;
+            background: var(--accent);
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: #fff;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .18s;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: var(--accent-h);
+        }
+
+        .send-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .foot-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--dim);
+        }
+
+        /* ── Sessions page ── */
+        .sess-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sess-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .sess-card:hover {
+            border-color: var(--accent);
+        }
+
+        .sess-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sess-title {
+            font-size: 13px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sess-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .sess-model {
+            font-size: 10px;
+            color: var(--dim);
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sess-acts {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        /* ── Knowledge page ── */
+        .know-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .know-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            transition: border-color .18s;
+        }
+
+        .know-card:hover {
+            border-color: var(--accent);
+        }
+
+        .know-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .know-topic {
+            font-size: 13px;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .src-badge {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .src-badge.user {
+            background: #6c63ff22;
+            color: var(--accent);
+            border: 1px solid #6c63ff44;
+        }
+
+        .src-badge.ai {
+            background: #ff6b9d22;
+            color: var(--accent2);
+            border: 1px solid #ff6b9d44;
+        }
+
+        .know-content {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .know-foot {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kw-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .kw {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            padding: 1px 7px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .know-acts {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .know-date {
+            font-size: 10px;
+            color: var(--dim);
+            margin-top: 6px;
+        }
+
+        /* ── Persona page ── */
+        .form-grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .p-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .p-ava {
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius);
+            flex-shrink: 0;
+            background: var(--surface3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .p-ava img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: calc(var(--radius) - 2px);
+        }
+
+        /* ── Profile page ── */
+        .prof-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .prof-ava {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--surface3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .prof-ava img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* ── Admin page ── */
+        .admin-token-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-bottom: 16px;
+        }
+
+        /* ── Empty / Loading states ── */
+        .empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            padding: 48px 20px;
+            color: var(--muted);
+        }
+
+        .empty .ei {
+            font-size: 44px;
+            opacity: .35;
+        }
+
+        .empty h3 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .empty p {
+            font-size: 12px;
+            color: var(--dim);
+            max-width: 260px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            padding: 48px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Mobile ── */
+        .mob-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 720px) {
+            :root {
+                --sidebar-w: 260px;
+            }
+
+            #sidebar {
+                position: fixed;
+                left: -270px;
+                height: 100%;
+                transition: left .24s;
+            }
+
+            #sidebar.open {
+                left: 0;
+                box-shadow: 4px 0 24px rgba(0, 0, 0, .5);
+            }
+
+            .mob-bar {
+                display: flex !important;
+            }
+
+            .overlay-bg {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .5);
+                z-index: 9;
+            }
+
+            .overlay-bg.show {
+                display: block;
+            }
+
+            .form-grid2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="toasts"></div>
+
+    <!-- ── Setup ──────────────────────────────────────────────────── -->
+    <div id="setup-screen" class="center-screen">
+        <div class="auth-box">
+            <div class="brand">
+                <div class="icon">🐰</div>
+                <h1>BunnyChat</h1>
+                <p>Enter your API URL to begin</p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div class="field">
+                    <label>API Base URL</label>
+                    <input id="setup-url" type="url" placeholder="https://your-name.bunny.run" />
+                    <span class="hint">No trailing slash. Found in Bunny Dashboard → Edge Scripting.</span>
+                </div>
+                <button class="btn btn-primary btn-full" id="setup-save">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Auth ───────────────────────────────────────────────────── -->
+    <div id="auth-screen" class="center-screen hidden">
+        <div class="auth-box">
+            <div class="brand">
+                <div class="icon">🐰</div>
+                <h1>BunnyChat</h1>
+                <p>Role-play AI Chat</p>
+            </div>
+            <div class="tabs">
+                <div class="tab on" data-tab="login">Sign In</div>
+                <div class="tab" data-tab="register">Register</div>
+            </div>
+            <form class="auth-form on" id="login-form" novalidate>
+                <div class="field">
+                    <label>Email</label>
+                    <input id="li-email" type="email" placeholder="alice@example.com" autocomplete="email" />
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input id="li-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="li-btn">Sign In</button>
+            </form>
+            <form class="auth-form" id="reg-form" novalidate>
+                <div class="field">
+                    <label>Email</label>
+                    <input id="rg-email" type="email" placeholder="alice@example.com" autocomplete="email" />
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input id="rg-pass" type="password" placeholder="Min. 6 characters" autocomplete="new-password" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="rg-btn">Create Account</button>
+                <p style="font-size:11px;color:var(--dim);text-align:center;">You'll receive 100 credits on
+                    registration.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── App ────────────────────────────────────────────────────── -->
+    <div id="app" class="hidden">
+        <div class="overlay-bg" id="mob-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar">
+            <div class="sb-top">
+                <span class="sb-logo">🐰</span>
+                <span class="sb-title">BunnyChat</span>
+                <span class="credits-pill" id="sb-credits">⚡ —</span>
+            </div>
+
+            <button class="new-btn" id="new-chat-btn">✏️ New Chat</button>
+
+            <nav class="nav">
+                <div class="nav-item on" data-view="chat"> <span class="nav-icon">💬</span>Chat</div>
+                <div class="nav-item" data-view="sessions"> <span class="nav-icon">🗂</span>Sessions</div>
+                <div class="nav-item" data-view="knowledge"> <span class="nav-icon">📚</span>Knowledge</div>
+            </nav>
+
+            <div class="divider"></div>
+            <div class="sb-label">Recent</div>
+
+            <div class="sb-sessions" id="sb-sessions">
+                <div style="padding:6px 10px;font-size:11px;color:var(--dim);">Loading…</div>
+            </div>
+
+            <div class="sb-foot">
+                <div class="sb-foot-nav">
+                    <div class="nav-item" data-view="persona"> <span class="nav-icon">🎭</span>Persona</div>
+                    <div class="nav-item" data-view="profile"> <span class="nav-icon">👤</span>Profile</div>
+                    <div class="nav-item" data-view="admin"> <span class="nav-icon">🔑</span>Admin</div>
+                </div>
+                <div class="user-mini">
+                    <div class="ava-sm" id="sb-ava">👤</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="u-name" id="sb-name">—</div>
+                        <div class="u-email" id="sb-email">—</div>
+                    </div>
+                    <button class="icon-btn" id="settings-btn" title="API Settings">⚙️</button>
+                    <button class="icon-btn danger" id="logout-btn" title="Logout">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main id="main">
+            <!-- Mobile bar -->
+            <div class="mob-bar" id="mob-bar">
+                <button class="icon-btn" id="mob-menu">☰</button>
+                <span style="font-size:14px;font-weight:700;flex:1;">BunnyChat</span>
+                <span class="credits-pill" id="mob-credits">⚡ —</span>
+            </div>
+
+            <!-- Chat view -->
+            <div class="view on" id="chat-view">
+                <div class="chat-head">
+                    <div class="chat-head-info">
+                        <div class="chat-head-title" id="ch-title">New Chat</div>
+                        <div class="chat-head-meta" id="ch-meta">Start a conversation</div>
+                    </div>
+                    <div class="chat-head-acts">
+                        <button class="icon-btn hidden" id="ch-rename-btn" title="Rename">✏️</button>
+                        <button class="icon-btn danger hidden" id="ch-delete-btn" title="Delete">🗑️</button>
+                    </div>
+                </div>
+                <div class="chat-msgs" id="chat-msgs"></div>
+                <div class="empty-chat" id="chat-empty">
+                    <div class="ei">🐰</div>
+                    <h3>Start a Conversation</h3>
+                    <p>Type below to chat with your AI persona. Each message costs 1 credit.</p>
+                </div>
+                <div class="chat-foot">
+                    <div class="input-row">
+                        <textarea class="chat-ta" id="chat-input"
+                            placeholder="Type a message… (Enter to send, Shift+Enter for new line)" rows="1"></textarea>
+                        <button class="send-btn" id="send-btn">➤</button>
+                    </div>
+                    <div class="foot-info">
+                        <span id="char-count">0 / 4000</span>
+                        <span id="credit-info"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions view -->
+            <div class="view" id="sessions-view">
+                <div class="page-head">
+                    <div>
+                        <h2>🗂 Sessions</h2>
+                        <p>All your chat history</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-ghost btn-sm" id="sess-refresh">↻ Refresh</button>
+                        <button class="btn btn-danger btn-sm" id="sess-clear-all">🗑 Clear All</button>
+                    </div>
+                </div>
+                <div class="page-body" id="sess-body">
+                    <div class="loading">
+                        <div class="spinner"></div>Loading…
+                    </div>
+                </div>
+            </div>
+
+            <!-- Knowledge view -->
+            <div class="view" id="knowledge-view">
+                <div class="page-head">
+                    <div>
+                        <h2>📚 Knowledge Base</h2>
+                        <p>AI's source of truth · 1 credit per entry</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-ghost btn-sm" id="know-refresh">↻ Refresh</button>
+                        <button class="btn btn-primary btn-sm" id="know-add">＋ Add Entry</button>
+                    </div>
+                </div>
+                <div class="page-body" id="know-body">
+                    <div class="loading">
+                        <div class="spinner"></div>Loading…
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona view -->
+            <div class="view" id="persona-view">
+                <div class="page-head">
+                    <div>
+                        <h2>🎭 Persona</h2>
+                        <p>Your AI character</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" id="persona-load">↻ Load</button>
+                </div>
+                <div class="page-body">
+                    <div id="persona-loading" class="loading hidden">
+                        <div class="spinner"></div>Loading…
+                    </div>
+                    <div class="card" id="persona-card">
+                        <div class="p-preview">
+                            <div class="p-ava" id="p-ava">🎭</div>
+                            <div>
+                                <div id="p-name-lbl" style="font-size:17px;font-weight:700;">—</div>
+                                <div id="p-sub-lbl" style="font-size:12px;color:var(--muted);margin-top:3px;">—</div>
+                            </div>
+                        </div>
+                        <form id="persona-form" novalidate>
+                            <div class="form-grid2">
+                                <div class="field"><label>Name</label><input id="p-name" placeholder="Assistant" />
+                                </div>
+                                <div class="field"><label>Sex</label>
+                                    <select id="p-sex">
+                                        <option value="undefined">Undefined</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="field"><label>Age</label><input id="p-age" type="number" placeholder="20"
+                                        min="1" max="999" /></div>
+                                <div class="field"><label>Image URL</label><input id="p-image" type="url"
+                                        placeholder="https://… (optional)" /></div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px;">
+                                <div class="field"><label>Personality</label><input id="p-personality"
+                                        placeholder="calm,caring,witty" /></div>
+                                <div class="field"><label>Likes</label><input id="p-likes"
+                                        placeholder="music,cats,coffee" /></div>
+                                <div class="field"><label>Dislikes</label><input id="p-dislikes"
+                                        placeholder="noise,crowds" /></div>
+                                <div class="field">
+                                    <label>Specialization</label>
+                                    <input id="p-spec" placeholder="physics,anime,history" />
+                                    <span class="hint">Topics the AI knows deeply. Outside these → in-character
+                                        refusal.</span>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary" id="persona-save">💾 Save Persona</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card mt-2 hidden" id="prompt-card">
+                        <div class="card-title">Generated System Prompt</div>
+                        <pre id="prompt-text"
+                            style="font-size:11px;color:var(--muted);white-space:pre-wrap;line-height:1.6;"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile view -->
+            <div class="view" id="profile-view">
+                <div class="page-head">
+                    <div>
+                        <h2>👤 Profile</h2>
+                        <p>Your account</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" id="profile-load">↻ Refresh</button>
+                </div>
+                <div class="page-body">
+                    <div class="card">
+                        <div class="prof-preview">
+                            <div class="prof-ava" id="prof-ava">👤</div>
+                            <div>
+                                <div id="prof-username" style="font-size:15px;font-weight:700;color:var(--muted);">@—
+                                </div>
+                                <div id="prof-email" style="font-size:12px;color:var(--dim);margin-top:2px;">—</div>
+                                <div style="margin-top:5px;font-size:12px;color:var(--warning);font-weight:700;"
+                                    id="prof-credits">⚡ — credits</div>
+                            </div>
+                        </div>
+                        <form id="profile-form" novalidate>
+                            <div class="form-grid2">
+                                <div class="field"><label>Display Name</label><input id="prof-dname"
+                                        placeholder="Your name" maxlength="50" /></div>
+                                <div class="field"><label>Avatar URL</label><input id="prof-avatar" type="url"
+                                        placeholder="https://… (empty to clear)" /></div>
+                            </div>
+                            <div class="field mt-2">
+                                <label>Credits (self-service)</label>
+                                <input id="prof-credits-inp" type="number" placeholder="New credit amount" min="0" />
+                                <span class="hint" style="color:var(--warning);">⚠️ Remove from production — use admin
+                                    routes only.</span>
+                            </div>
+                            <div class="mt-2">
+                                <button type="submit" class="btn btn-primary" id="profile-save">💾 Save</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-title">Session</div>
+                        <button class="btn btn-danger" id="logout-btn2">🚪 Sign Out</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin view -->
+            <div class="view" id="admin-view">
+                <div class="page-head">
+                    <div>
+                        <h2>🔑 Admin</h2>
+                        <p>Requires X-Admin-Token</p>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="admin-token-row">
+                        <span style="font-size:12px;font-weight:700;flex-shrink:0;">Token:</span>
+                        <input id="admin-token" type="password" placeholder="Admin token" style="max-width:300px;" />
+                        <button class="btn btn-ghost btn-sm" id="toggle-token">👁</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Update Credits</div>
+                        <form id="admin-credits-form" novalidate>
+                            <div class="form-grid2">
+                                <div class="field"><label>User ID</label><input id="adm-uid" type="number"
+                                        placeholder="1" min="1" /></div>
+                                <div class="field"><label>Amount</label><input id="adm-amt" type="number"
+                                        placeholder="100" min="0" /></div>
+                                <div class="field"><label>Operation</label>
+                                    <select id="adm-op">
+                                        <option value="add">Add</option>
+                                        <option value="set">Set (exact)</option>
+                                        <option value="subtract">Subtract</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button type="submit" class="btn btn-primary" id="adm-credits-btn">Apply
+                                    Credits</button>
+                            </div>
+                        </form>
+                        <div id="adm-credits-result" class="hidden mt-2"
+                            style="padding:10px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;">
+                        </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-title">Look Up User</div>
+                        <div class="flex gap-2 mt-1" style="align-items:center;">
+                            <input id="adm-lookup-id" type="number" placeholder="User ID" style="max-width:140px;" />
+                            <button class="btn btn-ghost btn-sm" id="adm-lookup-btn">🔍 Lookup</button>
+                        </div>
+                        <div id="adm-lookup-result" class="hidden mt-2"
+                            style="padding:10px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ── Modals ──────────────────────────────────────────────────── -->
+
+    <!-- Confirm -->
+    <div class="overlay hidden" id="confirm-overlay">
+        <div class="modal" style="max-width:340px;text-align:center;">
+            <div class="confirm-icon" id="c-icon">⚠️</div>
+            <h3 id="c-title">Are you sure?</h3>
+            <p class="confirm-text" id="c-msg">This cannot be undone.</p>
+            <div class="modal-foot" style="justify-content:center;margin-top:20px;">
+                <button class="btn btn-ghost" id="c-cancel">Cancel</button>
+                <button class="btn btn-danger" id="c-ok">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename session -->
+    <div class="overlay hidden" id="rename-overlay">
+        <div class="modal" style="max-width:380px;">
+            <div class="modal-head">
+                <h3>Rename Session</h3><button class="modal-close" data-close="rename-overlay">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="field"><label>Title</label><input id="rename-input" maxlength="100"
+                        placeholder="Session title" /></div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close="rename-overlay">Cancel</button>
+                <button class="btn btn-primary" id="rename-save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Knowledge modal -->
+    <div class="overlay hidden" id="know-overlay">
+        <div class="modal modal-lg">
+            <div class="modal-head">
+                <h3 id="km-title">Add Knowledge</h3><button class="modal-close" data-close="know-overlay">✕</button>
+            </div>
+            <form id="know-form" novalidate>
+                <div class="modal-body">
+                    <div class="field">
+                        <label>Topic *</label>
+                        <input id="km-topic" placeholder="e.g. Genghis Khan" maxlength="100" />
+                    </div>
+                    <div class="field">
+                        <label>Content *</label>
+                        <textarea id="km-content" rows="5" placeholder="Knowledge content…" maxlength="5000"></textarea>
+                        <div style="display:flex;justify-content:space-between;margin-top:2px;">
+                            <span class="hint">Max 5000 chars. Split long content into multiple entries.</span>
+                            <span class="hint" id="km-cc">0 / 5000</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Keywords</label>
+                        <input id="km-kw" placeholder="keyword1,keyword2 — leave empty for auto-extraction" />
+                    </div>
+                    <div id="km-cost"
+                        style="font-size:12px;color:var(--warning);background:#2d2310;border-radius:var(--radius-sm);padding:8px 12px;">
+                        ⚡ Adding costs <strong>1 credit</strong>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button type="button" class="btn btn-ghost" data-close="know-overlay">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="km-save">Save Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Session messages modal -->
+    <div class="overlay hidden" id="sess-detail-overlay">
+        <div class="modal modal-lg" style="max-width:620px;">
+            <div class="modal-head">
+                <h3 id="sdm-title">Messages</h3>
+                <button class="modal-close" data-close="sess-detail-overlay">✕</button>
+            </div>
+            <div id="sdm-body" style="max-height:56vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close="sess-detail-overlay">Close</button>
+                <button class="btn btn-primary" id="sdm-open">Open in Chat →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings modal -->
+    <div class="overlay hidden" id="settings-overlay">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-head">
+                <h3>⚙️ API Settings</h3><button class="modal-close" data-close="settings-overlay">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="field">
+                    <label>API Base URL</label>
+                    <input id="settings-url" type="url" placeholder="https://your-name.bunny.run" />
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" data-close="settings-overlay">Cancel</button>
+                <button class="btn btn-primary" id="settings-save">Save & Reload</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        // ── Constants ──────────────────────────────────────────────────────
+        const SK = { URL: 'bc_url', TOKEN: 'bc_token', USER: 'bc_user' };
+
+        // ── State ──────────────────────────────────────────────────────────
+        const S = {
+            baseUrl: '',
+            token: '',
+            user: null,
+            sessionId: null,   // current chat session
+            sending: false,
+            editKnowId: null,
+            renameSessionId: null,
+            sdmSessionId: null,
+        };
+
+        // ── Storage ────────────────────────────────────────────────────────
+        const store = {
+            get(k, d = null) { try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : d; } catch { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { } },
+            del(k) { try { localStorage.removeItem(k); } catch { } },
+        };
+
+        // ── XSS-safe escape ────────────────────────────────────────────────
+        function esc(s) {
+            if (s == null) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // ── Date format ────────────────────────────────────────────────────
+        function fmt(dt) {
+            if (!dt) return '—';
+            try {
+                const d = new Date(String(dt).includes('T') ? dt : dt.replace(' ', 'T') + 'Z');
+                return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch { return String(dt); }
+        }
+
+        // ── API ────────────────────────────────────────────────────────────
+        const api = {
+            async req(method, path, body = null, extraHeaders = {}) {
+                const headers = { 'Content-Type': 'application/json', ...extraHeaders };
+                if (S.token) headers['Authorization'] = `Bearer ${S.token}`;
+                const opts = { method, headers };
+                if (body !== null) opts.body = JSON.stringify(body);
+                let res;
+                try { res = await fetch(S.baseUrl + path, opts); }
+                catch (e) { throw new Error(`Network error: ${e.message}. Verify your API URL and that CORS is enabled on the server.`); }
+                let data;
+                try { data = await res.json(); } catch { data = { error: `HTTP ${res.status}` }; }
+                if (!res.ok) {
+                    const e = new Error(data?.error || data?.message || `HTTP ${res.status}`);
+                    e.status = res.status;
+                    throw e;
+                }
+                return data;
+            },
+            get(p) { return this.req('GET', p); },
+            post(p, b) { return this.req('POST', p, b); },
+            patch(p, b) { return this.req('PATCH', p, b); },
+            put(p, b) { return this.req('PUT', p, b); },
+            del(p) { return this.req('DELETE', p); },
+            adminGet(p) { return this.req('GET', p, null, { 'X-Admin-Token': adminToken() }); },
+            adminPost(p, b) { return this.req('POST', p, b, { 'X-Admin-Token': adminToken() }); },
+        };
+        function adminToken() { return document.getElementById('admin-token')?.value?.trim() || ''; }
+
+        // ── Toast ──────────────────────────────────────────────────────────
+        const toast = (() => {
+            const wrap = document.getElementById('toasts');
+            const ico = { ok: '✅', err: '❌', inf: 'ℹ️', wrn: '⚠️' };
+            function show(type, msg, ms = 4000) {
+                const el = document.createElement('div');
+                el.className = `toast ${type}`;
+                el.innerHTML = `<span>${ico[type] || 'ℹ️'}</span><span style="flex:1">${esc(msg)}</span><button class="toast-x">✕</button>`;
+                el.querySelector('.toast-x').onclick = () => dismiss(el);
+                wrap.appendChild(el);
+                if (ms > 0) setTimeout(() => dismiss(el), ms);
+            }
+            function dismiss(el) {
+                if (!el?.parentNode) return;
+                el.style.animation = 'tOut .2s ease forwards';
+                setTimeout(() => el.remove(), 210);
+            }
+            return {
+                ok: (m, ms) => show('ok', m, ms),
+                err: (m, ms) => show('err', m, ms),
+                inf: (m, ms) => show('inf', m, ms),
+                wrn: (m, ms) => show('wrn', m, ms),
+            };
+        })();
+
+        // ── Confirm dialog ─────────────────────────────────────────────────
+        function confirm({ title = 'Are you sure?', msg = '', icon = '⚠️', danger = true } = {}) {
+            return new Promise(resolve => {
+                document.getElementById('c-title').textContent = title;
+                document.getElementById('c-msg').textContent = msg;
+                document.getElementById('c-icon').textContent = icon;
+                const okBtn = document.getElementById('c-ok');
+                okBtn.className = `btn ${danger ? 'btn-danger' : 'btn-primary'}`;
+                openModal('confirm-overlay');
+                const ok = () => { cleanup(); resolve(true); };
+                const cancel = () => { cleanup(); resolve(false); };
+                function cleanup() {
+                    closeModal('confirm-overlay');
+                    okBtn.removeEventListener('click', ok);
+                    document.getElementById('c-cancel').removeEventListener('click', cancel);
+                }
+                okBtn.addEventListener('click', ok);
+                document.getElementById('c-cancel').addEventListener('click', cancel);
+            });
+        }
+
+        // ── Modals ─────────────────────────────────────────────────────────
+        function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+        document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.close)));
+        document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.overlay:not(.hidden)').forEach(o => o.classList.add('hidden')); });
+
+        // ── View router ────────────────────────────────────────────────────
+        function showView(name) {
+            S.currentView = name;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('on', el.dataset.view === name));
+            document.querySelectorAll('.view').forEach(el => el.classList.toggle('on', el.id === `${name}-view`));
+            closeMobileSidebar();
+            if (name === 'sessions') loadSessions();
+            if (name === 'knowledge') loadKnowledge();
+            if (name === 'persona') loadPersona();
+            if (name === 'profile') loadProfile();
+        }
+        document.querySelectorAll('[data-view]').forEach(el => el.addEventListener('click', () => showView(el.dataset.view)));
+
+        // ── Bootstrap ──────────────────────────────────────────────────────
+        function init() {
+            S.baseUrl = store.get(SK.URL, '');
+            S.token = store.get(SK.TOKEN, '');
+            S.user = store.get(SK.USER, null);
+            if (!S.baseUrl) return showScreen('setup');
+            if (S.token && S.user) return bootApp();
+            showScreen('auth');
+        }
+
+        function showScreen(s) {
+            document.getElementById('setup-screen').classList.toggle('hidden', s !== 'setup');
+            document.getElementById('auth-screen').classList.toggle('hidden', s !== 'auth');
+            document.getElementById('app').classList.toggle('hidden', s !== 'app');
+        }
+
+        function bootApp() {
+            showScreen('app');
+            refreshUser();
+            loadSidebarSessions();
+            showView('chat');
+            resetChatUI();
+            checkMobile();
+        }
+
+        // ── Setup ──────────────────────────────────────────────────────────
+        document.getElementById('setup-save').addEventListener('click', () => {
+            const url = document.getElementById('setup-url').value.trim().replace(/\/+$/, '');
+            if (!url) { toast.err('Enter the API base URL.'); return; }
+            try { new URL(url); } catch { toast.err('Invalid URL format.'); return; }
+            store.set(SK.URL, url);
+            S.baseUrl = url;
+            showScreen('auth');
+        });
+        document.getElementById('setup-url').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('setup-save').click(); });
+
+        // ── Settings ───────────────────────────────────────────────────────
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            document.getElementById('settings-url').value = S.baseUrl;
+            openModal('settings-overlay');
+        });
+        document.getElementById('settings-save').addEventListener('click', () => {
+            const url = document.getElementById('settings-url').value.trim().replace(/\/+$/, '');
+            if (!url) { toast.err('Enter the API base URL.'); return; }
+            try { new URL(url); } catch { toast.err('Invalid URL format.'); return; }
+            store.set(SK.URL, url);
+            S.baseUrl = url;
+            closeModal('settings-overlay');
+            toast.ok('URL updated. Reloading…');
+            setTimeout(() => location.reload(), 700);
+        });
+
+        // ── Auth tabs ──────────────────────────────────────────────────────
+        document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+            document.querySelectorAll('.auth-form').forEach(x => x.classList.remove('on'));
+            t.classList.add('on');
+            document.getElementById(`${t.dataset.tab}-form`).classList.add('on');
+        }));
+
+        // ── Login ──────────────────────────────────────────────────────────
+        document.getElementById('login-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = document.getElementById('li-email').value.trim();
+            const pass = document.getElementById('li-pass').value;
+            const btn = document.getElementById('li-btn');
+            if (!email) { toast.err('Email is required.'); return; }
+            if (!pass) { toast.err('Password is required.'); return; }
+            btn.disabled = true; btn.textContent = 'Signing in…';
+            try {
+                const d = await api.post('/auth/login', { email, password: pass });
+                S.token = d.session_token; S.user = d.user;
+                store.set(SK.TOKEN, S.token);
+                store.set(SK.USER, S.user);
+                toast.ok(`Welcome back, ${d.user.displayname}!`);
+                bootApp();
+            } catch (err) {
+                toast.err(err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = 'Sign In';
+            }
+        });
+
+        // ── Register ───────────────────────────────────────────────────────
+        document.getElementById('reg-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = document.getElementById('rg-email').value.trim();
+            const pass = document.getElementById('rg-pass').value;
+            const btn = document.getElementById('rg-btn');
+            if (!email) { toast.err('Email is required.'); return; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast.err('Invalid email format.'); return; }
+            if (!pass) { toast.err('Password is required.'); return; }
+            if (pass.length < 6) { toast.err('Password must be at least 6 characters.'); return; }
+            btn.disabled = true; btn.textContent = 'Creating…';
+            try {
+                const d = await api.post('/auth/register', { email, password: pass });
+                S.token = d.session_token; S.user = d.user;
+                store.set(SK.TOKEN, S.token);
+                store.set(SK.USER, S.user);
+                toast.ok(`Account created! Welcome, ${d.user.displayname}! You have 100 credits.`);
+                bootApp();
+            } catch (err) {
+                toast.err(err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = 'Create Account';
+            }
+        });
+
+        // ── Logout ─────────────────────────────────────────────────────────
+        async function doLogout() {
+            const ok = await confirm({ title: 'Sign Out', msg: 'Are you sure you want to sign out?', icon: '🚪', danger: false });
+            if (!ok) return;
+            try { await api.post('/auth/logout'); } catch { }
+            S.token = ''; S.user = null; S.sessionId = null;
+            store.del(SK.TOKEN); store.del(SK.USER);
+            toast.inf('Signed out.');
+            showScreen('auth');
+        }
+        document.getElementById('logout-btn').addEventListener('click', doLogout);
+        document.getElementById('logout-btn2').addEventListener('click', doLogout);
+
+        // ── Refresh user from API ──────────────────────────────────────────
+        async function refreshUser() {
+            try {
+                const d = await api.get('/me');
+                S.user = d.user;
+                store.set(SK.USER, S.user);
+                updateSidebarUser();
+            } catch (err) {
+                // If 401, session expired
+                if (err.status === 401) {
+                    toast.err('Session expired. Please sign in again.');
+                    S.token = ''; S.user = null;
+                    store.del(SK.TOKEN); store.del(SK.USER);
+                    showScreen('auth');
+                }
+            }
+        }
+
+        // ── Sidebar user info ──────────────────────────────────────────────
+        function updateSidebarUser() {
+            const u = S.user;
+            if (!u) return;
+            document.getElementById('sb-name').textContent = u.displayname || u.username || '—';
+            document.getElementById('sb-email').textContent = u.email || '—';
+            document.getElementById('sb-credits').textContent = `⚡ ${u.credits ?? '—'}`;
+            document.getElementById('mob-credits').textContent = `⚡ ${u.credits ?? '—'}`;
+            document.getElementById('credit-info').textContent = `Credits: ${u.credits ?? '—'}`;
+
+            const av = document.getElementById('sb-ava');
+            if (u.avatar) {
+                av.innerHTML = `<img src="${esc(u.avatar)}" alt="avatar" onerror="this.parentNode.textContent='👤'" />`;
+            } else {
+                av.textContent = '👤';
+            }
+        }
+
+        function setCredits(n) {
+            if (S.user) { S.user.credits = n; store.set(SK.USER, S.user); }
+            updateSidebarUser();
+        }
+
+        // ── Sidebar sessions ───────────────────────────────────────────────
+        async function loadSidebarSessions() {
+            const wrap = document.getElementById('sb-sessions');
+            wrap.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:var(--dim);">Loading…</div>`;
+            try {
+                const d = await api.get('/sessions?limit=20&offset=0');
+                const list = d.sessions || [];
+                if (!list.length) {
+                    wrap.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:var(--dim);">No sessions yet.</div>`;
+                    return;
+                }
+                wrap.innerHTML = list.map(s => `
+      <div class="sb-session ${S.sessionId === s.id ? 'on' : ''}" data-sid="${s.id}">
+        <span class="sb-session-title">${esc(s.title)}</span>
+        <div class="sb-session-acts">
+          <button class="sb-act" data-act="rename" data-sid="${s.id}" data-title="${esc(s.title)}" title="Rename">✏️</button>
+          <button class="sb-act" data-act="delete" data-sid="${s.id}" title="Delete">🗑</button>
+        </div>
+      </div>`).join('');
+
+                wrap.querySelectorAll('.sb-session').forEach(el => {
+                    el.addEventListener('click', e => {
+                        if (e.target.closest('[data-act]')) return;
+                        openSessionInChat(parseInt(el.dataset.sid));
+                    });
+                });
+                wrap.querySelectorAll('[data-act]').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (btn.dataset.act === 'rename') openRenameModal(parseInt(btn.dataset.sid), btn.dataset.title);
+                        if (btn.dataset.act === 'delete') deleteSession(parseInt(btn.dataset.sid));
+                    });
+                });
+            } catch {
+                wrap.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:var(--danger);">Failed to load.</div>`;
+            }
+        }
+
+        // ── Chat: Reset to empty state ─────────────────────────────────────
+        function resetChatUI() {
+            S.sessionId = null;
+            document.getElementById('ch-title').textContent = 'New Chat';
+            document.getElementById('ch-meta').textContent = 'Start a conversation';
+            document.getElementById('chat-msgs').innerHTML = '';
+            document.getElementById('chat-empty').classList.remove('hidden');
+            document.getElementById('ch-rename-btn').classList.add('hidden');
+            document.getElementById('ch-delete-btn').classList.add('hidden');
+            // Clear active highlight in sidebar
+            document.querySelectorAll('.sb-session').forEach(el => el.classList.remove('on'));
+        }
+
+        // ── Chat: Open a session ───────────────────────────────────────────
+        async function openSessionInChat(sessionId) {
+            // Always switch to chat view first
+            showView('chat');
+
+            // If already open, do nothing
+            if (S.sessionId === sessionId) return;
+
+            // Clear existing messages immediately to avoid showing stale content
+            S.sessionId = sessionId;
+            const msgs = document.getElementById('chat-msgs');
+            msgs.innerHTML = `<div class="loading"><div class="spinner"></div>Loading…</div>`;
+            document.getElementById('chat-empty').classList.add('hidden');
+            document.getElementById('ch-title').textContent = '…';
+            document.getElementById('ch-meta').textContent = '';
+            document.getElementById('ch-rename-btn').classList.remove('hidden');
+            document.getElementById('ch-delete-btn').classList.remove('hidden');
+
+            // Highlight in sidebar
+            document.querySelectorAll('.sb-session').forEach(el => {
+                el.classList.toggle('on', parseInt(el.dataset.sid) === sessionId);
+            });
+
+            try {
+                const d = await api.get(`/sessions/${sessionId}?limit=100&offset=0`);
+
+                // Guard: if user switched session while loading, discard this result
+                if (S.sessionId !== sessionId) return;
+
+                const { session, messages } = d;
+                document.getElementById('ch-title').textContent = esc(session.title);
+                document.getElementById('ch-meta').textContent =
+                    `${d.pagination.total} messages · ${fmt(session.updated_at)}`;
+
+                msgs.innerHTML = '';
+                if (!messages || messages.length === 0) {
+                    document.getElementById('chat-empty').classList.remove('hidden');
+                } else {
+                    document.getElementById('chat-empty').classList.add('hidden');
+                    messages.forEach(m => msgs.appendChild(buildMsgEl(m)));
+                    scrollBottom();
+                }
+            } catch (err) {
+                if (S.sessionId !== sessionId) return;
+                msgs.innerHTML = '';
+                document.getElementById('chat-empty').classList.remove('hidden');
+                document.getElementById('ch-title').textContent = 'Error';
+                toast.err(`Failed to load session: ${err.message}`);
+            }
+        }
+
+        // ── Chat: New chat button ──────────────────────────────────────────
+        document.getElementById('new-chat-btn').addEventListener('click', () => {
+            resetChatUI();
+            showView('chat');
+            document.getElementById('chat-input').focus();
+        });
+
+        // ── Chat: Build message element ────────────────────────────────────
+        function buildMsgEl(msg) {
+            const isUser = msg.role === 'user';
+            const row = document.createElement('div');
+            row.className = `msg-row ${msg.role}`;
+
+            const avaHtml = isUser
+                ? (S.user?.avatar ? `<img src="${esc(S.user.avatar)}" alt="you" onerror="this.parentNode.textContent='👤'" />` : '👤')
+                : '🎭';
+
+            const actionsHtml = (!isUser && msg.actions?.length)
+                ? `<div class="msg-actions-row">${msg.actions.map(a => `<span class="act-chip">*${esc(a)}*</span>`).join('')}</div>`
+                : '';
+
+            const modelHtml = msg.model
+                ? `<span class="truncate" style="max-width:160px" title="${esc(msg.model)}">· ${esc(msg.model.split('/').pop())}</span>`
+                : '';
+
+            row.innerHTML = `
+    <div class="msg-ava">${avaHtml}</div>
+    <div class="msg-body">
+      ${actionsHtml}
+      <div class="msg-bubble">${esc(msg.content)}</div>
+      <div class="msg-meta"><span>${fmt(msg.created_at)}</span>${modelHtml}</div>
+    </div>`;
+            return row;
+        }
+
+        function scrollBottom() {
+            const c = document.getElementById('chat-msgs');
+            c.scrollTop = c.scrollHeight;
+        }
+
+        // ── Chat: Input handling ───────────────────────────────────────────
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const charCount = document.getElementById('char-count');
+
+        chatInput.addEventListener('input', () => {
+            const n = chatInput.value.length;
+            charCount.textContent = `${n} / 4000`;
+            charCount.style.color = n > 3800 ? 'var(--danger)' : 'var(--dim)';
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 110) + 'px';
+        });
+
+        chatInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        sendBtn.addEventListener('click', sendMessage);
+
+        // ── Chat: Send message ─────────────────────────────────────────────
+        async function sendMessage() {
+            if (S.sending) return;
+
+            const text = chatInput.value.trim();
+            if (!text) { toast.wrn('Type a message first.'); return; }
+            if (text.length > 4000) { toast.err('Message too long (max 4000 chars).'); return; }
+            if ((S.user?.credits ?? 0) < 1) { toast.err('Insufficient credits. Top up via Profile or Admin.'); return; }
+
+            S.sending = true;
+            sendBtn.disabled = true;
+            chatInput.disabled = true;
+
+            // Hide empty state, show messages container
+            document.getElementById('chat-empty').classList.add('hidden');
+            const msgs = document.getElementById('chat-msgs');
+
+            // Append user message immediately
+            msgs.appendChild(buildMsgEl({ role: 'user', content: text, created_at: new Date().toISOString() }));
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            charCount.textContent = '0 / 4000';
+            scrollBottom();
+
+            // Typing indicator
+            const typing = document.createElement('div');
+            typing.className = 'typing-row';
+            typing.innerHTML = `
+    <div class="msg-ava">🎭</div>
+    <div class="typing-bubble">
+      <div class="typing-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+    </div>`;
+            msgs.appendChild(typing);
+            scrollBottom();
+
+            try {
+                const body = { message: text };
+                if (S.sessionId) body.session_id = S.sessionId;
+
+                const d = await api.post('/chat', body);
+
+                typing.remove();
+
+                // Store session ID (important for new chats)
+                const isNewSession = !S.sessionId;
+                S.sessionId = d.session_id;
+
+                // Build AI message element (with actions)
+                const aiRow = document.createElement('div');
+                aiRow.className = 'msg-row assistant';
+                const actHtml = (d.actions?.length)
+                    ? `<div class="msg-actions-row">${d.actions.map(a => `<span class="act-chip">*${esc(a)}*</span>`).join('')}</div>`
+                    : '';
+                const modelSnip = d.model ? `<span class="truncate" style="max-width:160px" title="${esc(d.model)}">· ${esc(d.model.split('/').pop())}</span>` : '';
+                aiRow.innerHTML = `
+      <div class="msg-ava">🎭</div>
+      <div class="msg-body">
+        ${actHtml}
+        <div class="msg-bubble">${esc(d.reply)}</div>
+        <div class="msg-meta"><span>${fmt(new Date().toISOString())}</span>${modelSnip}</div>
+      </div>`;
+                msgs.appendChild(aiRow);
+                scrollBottom();
+
+                // Show header actions now that we have a session
+                document.getElementById('ch-rename-btn').classList.remove('hidden');
+                document.getElementById('ch-delete-btn').classList.remove('hidden');
+
+                // Update credits
+                setCredits(d.credits_remaining);
+
+                // Reload sidebar and update title after a delay (title is generated async on server)
+                setTimeout(async () => {
+                    await loadSidebarSessions();
+                    // Refresh session title in chat header
+                    if (S.sessionId === d.session_id) {
+                        try {
+                            const s = await api.get(`/sessions/${d.session_id}`);
+                            document.getElementById('ch-title').textContent = esc(s.session.title);
+                            document.getElementById('ch-meta').textContent =
+                                `${s.pagination.total} messages · ${fmt(s.session.updated_at)}`;
+                            // Update sidebar highlight
+                            document.querySelectorAll('.sb-session').forEach(el => {
+                                el.classList.toggle('on', parseInt(el.dataset.sid) === d.session_id);
+                            });
+                        } catch { }
+                    }
+                }, 2800);
+
+            } catch (err) {
+                typing.remove();
+                if (err.status === 402) {
+                    toast.err('Insufficient credits.', 6000);
+                } else if (err.status === 401) {
+                    toast.err('Session expired. Please sign in again.');
+                    doLogout();
+                } else if (err.status === 404) {
+                    // Session was deleted externally — reset and retry as new chat
+                    toast.wrn('Session not found. Starting a new chat.');
+                    S.sessionId = null;
+                } else {
+                    toast.err(`Error: ${err.message}`);
+                }
+                // Remove optimistic user message on failure
+                const lastUserMsg = msgs.querySelector('.msg-row.user:last-of-type');
+                if (lastUserMsg) lastUserMsg.remove();
+                if (!msgs.children.length) document.getElementById('chat-empty').classList.remove('hidden');
+            } finally {
+                S.sending = false;
+                sendBtn.disabled = false;
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        // ── Chat header actions ────────────────────────────────────────────
+        document.getElementById('ch-rename-btn').addEventListener('click', () => {
+            if (!S.sessionId) return;
+            openRenameModal(S.sessionId, document.getElementById('ch-title').textContent);
+        });
+        document.getElementById('ch-delete-btn').addEventListener('click', () => {
+            if (!S.sessionId) return;
+            deleteSession(S.sessionId);
+        });
+
+        // ── Sessions page ──────────────────────────────────────────────────
+        async function loadSessions() {
+            const body = document.getElementById('sess-body');
+            body.innerHTML = `<div class="loading"><div class="spinner"></div>Loading…</div>`;
+            try {
+                const d = await api.get('/sessions?limit=100&offset=0');
+                const list = d.sessions || [];
+                if (!list.length) {
+                    body.innerHTML = `<div class="empty"><div class="ei">🗂</div><h3>No Sessions</h3><p>Start a chat to create your first session.</p></div>`;
+                    return;
+                }
+                body.innerHTML = `<div class="sess-grid">${list.map(s => `
+      <div class="sess-card" data-sid="${s.id}">
+        <span style="font-size:20px;flex-shrink:0;">💬</span>
+        <div class="sess-info">
+          <div class="sess-title">${esc(s.title)}</div>
+          <div class="sess-meta">${s.message_count} messages · ${fmt(s.last_message_at || s.updated_at)}</div>
+          ${s.model ? `<div class="sess-model">${esc(s.model)}</div>` : ''}
+        </div>
+        <div class="sess-acts">
+          <button class="icon-btn" data-act="view"   data-sid="${s.id}" title="View messages">👁</button>
+          <button class="icon-btn" data-act="rename" data-sid="${s.id}" data-title="${esc(s.title)}" title="Rename">✏️</button>
+          <button class="icon-btn danger" data-act="delete" data-sid="${s.id}" title="Delete">🗑️</button>
+        </div>
+      </div>`).join('')}</div>`;
+
+                body.querySelectorAll('.sess-card').forEach(card => {
+                    card.addEventListener('click', e => {
+                        if (e.target.closest('[data-act]')) return;
+                        openSessionInChat(parseInt(card.dataset.sid));
+                    });
+                });
+                body.querySelectorAll('[data-act]').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        e.stopPropagation();
+                        const sid = parseInt(btn.dataset.sid);
+                        if (btn.dataset.act === 'view') openSessionDetailModal(sid);
+                        if (btn.dataset.act === 'rename') openRenameModal(sid, btn.dataset.title);
+                        if (btn.dataset.act === 'delete') deleteSession(sid);
+                    });
+                });
+            } catch (err) {
+                body.innerHTML = `<div class="empty"><div class="ei">❌</div><h3>Failed</h3><p>${esc(err.message)}</p></div>`;
+            }
+        }
+
+        document.getElementById('sess-refresh').addEventListener('click', loadSessions);
+
+        document.getElementById('sess-clear-all').addEventListener('click', async () => {
+            const ok = await confirm({
+                title: 'Clear All Sessions',
+                msg: 'Permanently delete ALL sessions and messages?',
+                icon: '🗑️',
+            });
+            if (!ok) return;
+            try {
+                const d = await api.del('/sessions');
+                toast.ok(`Deleted ${d.deleted} session${d.deleted !== 1 ? 's' : ''}.`);
+                resetChatUI();
+                loadSessions();
+                loadSidebarSessions();
+            } catch (err) {
+                toast.err(err.message);
+            }
+        });
+
+        // ── Session detail modal ───────────────────────────────────────────
+        async function openSessionDetailModal(sid) {
+            S.sdmSessionId = sid;
+            const body = document.getElementById('sdm-body');
+            body.innerHTML = `<div class="loading"><div class="spinner"></div>Loading…</div>`;
+            openModal('sess-detail-overlay');
+            try {
+                const d = await api.get(`/sessions/${sid}?limit=100&offset=0`);
+                document.getElementById('sdm-title').textContent = esc(d.session.title);
+                const msgs = d.messages || [];
+                if (!msgs.length) {
+                    body.innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">No messages.</div>`;
+                    return;
+                }
+                body.innerHTML = msgs.map(m => `
+      <div style="padding:9px 13px;border-radius:var(--radius-sm);background:${m.role === 'user' ? 'var(--surface2)' : '#1e2340'};">
+        <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">
+          ${m.role === 'user' ? '👤 You' : '🎭 AI'} · ${fmt(m.created_at)}
+        </div>
+        <div style="font-size:13px;line-height:1.6;">${esc(m.content)}</div>
+      </div>`).join('');
+            } catch (err) {
+                body.innerHTML = `<div style="color:var(--danger);padding:12px;font-size:13px;">${esc(err.message)}</div>`;
+            }
+        }
+
+        document.getElementById('sdm-open').addEventListener('click', () => {
+            if (!S.sdmSessionId) return;
+            closeModal('sess-detail-overlay');
+            openSessionInChat(S.sdmSessionId);
+        });
+
+        // ── Rename session ─────────────────────────────────────────────────
+        function openRenameModal(sid, currentTitle) {
+            S.renameSessionId = sid;
+            document.getElementById('rename-input').value = currentTitle || '';
+            openModal('rename-overlay');
+            setTimeout(() => document.getElementById('rename-input').select(), 60);
+        }
+
+        document.getElementById('rename-save').addEventListener('click', async () => {
+            const title = document.getElementById('rename-input').value.trim();
+            if (!title) { toast.err('Title is required.'); return; }
+            if (title.length > 100) { toast.err('Title max 100 characters.'); return; }
+            const btn = document.getElementById('rename-save');
+            btn.disabled = true; btn.textContent = 'Saving…';
+            try {
+                const d = await api.patch(`/sessions/${S.renameSessionId}`, { title });
+                closeModal('rename-overlay');
+                toast.ok('Session renamed.');
+                if (S.sessionId === S.renameSessionId) {
+                    document.getElementById('ch-title').textContent = esc(d.session.title);
+                }
+                loadSidebarSessions();
+                if (S.currentView === 'sessions') loadSessions();
+            } catch (err) {
+                toast.err(err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = 'Save';
+            }
+        });
+        document.getElementById('rename-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('rename-save').click();
+        });
+
+        // ── Delete session ─────────────────────────────────────────────────
+        async function deleteSession(sid) {
+            const ok = await confirm({
+                title: 'Delete Session',
+                msg: 'Permanently delete this session and all its messages?',
+                icon: '🗑️',
+            });
+            if (!ok) return;
+            try {
+                await api.del(`/sessions/${sid}`);
+                toast.ok('Session deleted.');
+                if (S.sessionId === sid) resetChatUI();
+                loadSidebarSessions();
+                if (S.currentView === 'sessions') loadSessions();
+            } catch (err) {
+                toast.err(err.message);
+            }
+        }
+
+        // ── Knowledge ──────────────────────────────────────────────────────
+        async function loadKnowledge() {
+            const body = document.getElementById('know-body');
+            body.innerHTML = `<div class="loading"><div class="spinner"></div>Loading…</div>`;
+            try {
+                const d = await api.get('/knowledge');
+                const list = d.knowledge || [];
+                if (!list.length) {
+                    body.innerHTML = `
+        <div class="empty">
+          <div class="ei">📚</div>
+          <h3>No Knowledge Entries</h3>
+          <p>Add entries to teach your AI specific facts. Each costs 1 credit.</p>
+          <button class="btn btn-primary btn-sm" id="know-add-empty">＋ Add Entry</button>
+        </div>`;
+                    document.getElementById('know-add-empty').addEventListener('click', openAddKnowledge);
+                    return;
+                }
+                body.innerHTML = `<div class="know-grid">${list.map(k => `
+      <div class="know-card">
+        <div class="know-head">
+          <div class="know-topic">${esc(k.topic)}</div>
+          <span class="src-badge ${k.source}">${k.source === 'user' ? '👤 Manual' : '🤖 AI'}</span>
+        </div>
+        <div class="know-content">${esc(k.content)}</div>
+        <div class="know-foot">
+          <div class="kw-list">${(k.keywords || '').split(',').filter(Boolean).map(w => `<span class="kw">${esc(w.trim())}</span>`).join('')}</div>
+          <div class="know-acts">
+            <button class="icon-btn" data-act="edit"
+              data-id="${k.id}"
+              data-topic="${esc(k.topic)}"
+              data-content="${esc(k.content)}"
+              data-kw="${esc(k.keywords || '')}"
+              title="Edit">✏️</button>
+            <button class="icon-btn danger" data-act="del" data-id="${k.id}" title="Delete">🗑️</button>
+          </div>
+        </div>
+        <div class="know-date">Updated ${fmt(k.updated_at)}</div>
+      </div>`).join('')}</div>`;
+
+                body.querySelectorAll('[data-act]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const { act, id, topic, content, kw } = btn.dataset;
+                        if (act === 'edit') openEditKnowledge(parseInt(id), topic, content, kw);
+                        if (act === 'del') deleteKnowledge(parseInt(id));
+                    });
+                });
+            } catch (err) {
+                body.innerHTML = `<div class="empty"><div class="ei">❌</div><h3>Failed</h3><p>${esc(err.message)}</p></div>`;
+            }
+        }
+
+        document.getElementById('know-refresh').addEventListener('click', loadKnowledge);
+        document.getElementById('know-add').addEventListener('click', openAddKnowledge);
+
+        function openAddKnowledge() {
+            S.editKnowId = null;
+            document.getElementById('km-title').textContent = 'Add Knowledge Entry';
+            document.getElementById('km-save').textContent = 'Add Entry (−1 credit)';
+            document.getElementById('km-topic').value = '';
+            document.getElementById('km-content').value = '';
+            document.getElementById('km-kw').value = '';
+            document.getElementById('km-cost').style.display = '';
+            document.getElementById('km-cc').textContent = '0 / 5000';
+            openModal('know-overlay');
+            setTimeout(() => document.getElementById('km-topic').focus(), 60);
+        }
+
+        function openEditKnowledge(id, topic, content, kw) {
+            S.editKnowId = id;
+            document.getElementById('km-title').textContent = 'Edit Knowledge Entry';
+            document.getElementById('km-save').textContent = 'Save Changes';
+            document.getElementById('km-topic').value = topic;
+            document.getElementById('km-content').value = content;
+            document.getElementById('km-kw').value = kw;
+            document.getElementById('km-cost').style.display = 'none';
+            document.getElementById('km-cc').textContent = `${content.length} / 5000`;
+            openModal('know-overlay');
+            setTimeout(() => document.getElementById('km-topic').focus(), 60);
+        }
+
+        document.getElementById('km-content').addEventListener('input', function () {
+            const n = this.value.length;
+            const cc = document.getElementById('km-cc');
+            cc.textContent = `${n} / 5000`;
+            cc.style.color = n > 4800 ? 'var(--danger)' : 'var(--dim)';
+        });
+
+        document.getElementById('know-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const topic = document.getElementById('km-topic').value.trim();
+            const content = document.getElementById('km-content').value.trim();
+            const kw = document.getElementById('km-kw').value.trim();
+            const btn = document.getElementById('km-save');
+            if (!topic) { toast.err('Topic is required.'); return; }
+            if (!content) { toast.err('Content is required.'); return; }
+            if (topic.length > 100) { toast.err('Topic max 100 characters.'); return; }
+            if (content.length > 5000) { toast.err('Content max 5000 chars. Split into multiple entries.'); return; }
+
+            btn.disabled = true;
+            const orig = btn.textContent;
+            btn.textContent = 'Saving…';
+
+            try {
+                if (S.editKnowId) {
+                    const body = { topic, content, keywords: kw };
+                    const d = await api.put(`/knowledge/${S.editKnowId}`, body);
+                    const src = d.keyword_source === 'manual' ? 'Manual keywords kept.' : 'Keywords re-extracted by AI.';
+                    toast.ok(`Updated. ${src}`);
+                } else {
+                    const body = { topic, content };
+                    if (kw) body.keywords = kw;
+                    const d = await api.post('/knowledge', body);
+                    const src = d.keyword_source === 'manual' ? 'Manual keywords used.' : 'Keywords auto-extracted by AI.';
+                    toast.ok(`Entry added. ${src}`);
+                    setCredits((S.user?.credits ?? 1) - 1);
+                }
+                closeModal('know-overlay');
+                loadKnowledge();
+            } catch (err) {
+                if (err.status === 402) toast.err('Insufficient credits.');
+                else toast.err(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = orig;
+            }
+        });
+
+        async function deleteKnowledge(id) {
+            const ok = await confirm({ title: 'Delete Entry', msg: 'Remove this knowledge entry permanently?', icon: '📚' });
+            if (!ok) return;
+            try {
+                await api.del(`/knowledge/${id}`);
+                toast.ok('Entry deleted.');
+                loadKnowledge();
+            } catch (err) {
+                toast.err(err.message);
+            }
+        }
+
+        // ── Persona ────────────────────────────────────────────────────────
+        async function loadPersona() {
+            document.getElementById('persona-loading').classList.remove('hidden');
+            document.getElementById('persona-card').style.opacity = '.4';
+            try {
+                const d = await api.get('/persona');
+                const p = d.persona;
+                document.getElementById('p-name').value = p.name || '';
+                document.getElementById('p-sex').value = p.sex || 'undefined';
+                document.getElementById('p-age').value = p.age || '';
+                document.getElementById('p-image').value = p.image || '';
+                document.getElementById('p-personality').value = p.personality || '';
+                document.getElementById('p-likes').value = p.likes || '';
+                document.getElementById('p-dislikes').value = p.dislikes || '';
+                document.getElementById('p-spec').value = p.specialization || '';
+                updatePersonaPreview(p);
+                if (p.prompt) {
+                    document.getElementById('prompt-card').classList.remove('hidden');
+                    document.getElementById('prompt-text').textContent = p.prompt;
+                }
+            } catch (err) {
+                toast.err(`Failed to load persona: ${err.message}`);
+            } finally {
+                document.getElementById('persona-loading').classList.add('hidden');
+                document.getElementById('persona-card').style.opacity = '1';
+            }
+        }
+
+        function updatePersonaPreview(p) {
+            document.getElementById('p-name-lbl').textContent = p.name || '—';
+            document.getElementById('p-sub-lbl').textContent = `${p.sex || 'undefined'} · Age ${p.age || '?'}`;
+            const av = document.getElementById('p-ava');
+            if (p.image) {
+                av.innerHTML = `<img src="${esc(p.image)}" alt="persona" onerror="this.parentNode.textContent='🎭'" style="width:100%;height:100%;object-fit:cover;border-radius:calc(var(--radius) - 2px);" />`;
+            } else {
+                av.textContent = '🎭';
+            }
+        }
+
+        document.getElementById('persona-load').addEventListener('click', loadPersona);
+
+        ['p-name', 'p-sex', 'p-age', 'p-image'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => updatePersonaPreview({
+                name: document.getElementById('p-name').value,
+                sex: document.getElementById('p-sex').value,
+                age: document.getElementById('p-age').value,
+                image: document.getElementById('p-image').value,
+            }));
+        });
+
+        document.getElementById('persona-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const ageVal = document.getElementById('p-age').value;
+            if (ageVal && (parseInt(ageVal) < 1 || parseInt(ageVal) > 999)) { toast.err('Age must be between 1 and 999.'); return; }
+            const body = {};
+            const name = document.getElementById('p-name').value.trim();
+            const sex = document.getElementById('p-sex').value;
+            const image = document.getElementById('p-image').value.trim();
+            const pers = document.getElementById('p-personality').value.trim();
+            const likes = document.getElementById('p-likes').value.trim();
+            const disl = document.getElementById('p-dislikes').value.trim();
+            const spec = document.getElementById('p-spec').value.trim();
+            if (name) body.name = name;
+            if (sex) body.sex = sex;
+            if (ageVal) body.age = parseInt(ageVal);
+            body.image = image; // send even if empty to clear
+            if (pers) body.personality = pers;
+            if (likes) body.likes = likes;
+            if (disl) body.dislikes = disl;
+            if (spec) body.specialization = spec;
+
+            const btn = document.getElementById('persona-save');
+            btn.disabled = true; btn.textContent = 'Saving…';
+            try {
+                const d = await api.put('/persona', body);
+                toast.ok(`Persona "${d.persona.name}" saved!`);
+                updatePersonaPreview({ ...body, name: d.persona.name });
+                if (d.persona.prompt) {
+                    document.getElementById('prompt-card').classList.remove('hidden');
+                    document.getElementById('prompt-text').textContent = d.persona.prompt;
+                }
+            } catch (err) {
+                toast.err(err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = '💾 Save Persona';
+            }
+        });
+
+        // ── Profile ────────────────────────────────────────────────────────
+        async function loadProfile() {
+            try {
+                const d = await api.get('/me');
+                S.user = d.user;
+                store.set(SK.USER, S.user);
+                updateSidebarUser();
+                const u = d.user;
+                document.getElementById('prof-username').textContent = `@${esc(u.username)}`;
+                document.getElementById('prof-email').textContent = u.email || '—';
+                document.getElementById('prof-credits').textContent = `⚡ ${u.credits} credits`;
+                document.getElementById('prof-dname').value = u.displayname || '';
+                document.getElementById('prof-avatar').value = u.avatar || '';
+                document.getElementById('prof-credits-inp').value = '';
+                const av = document.getElementById('prof-ava');
+                if (u.avatar) {
+                    av.innerHTML = `<img src="${esc(u.avatar)}" alt="avatar" onerror="this.parentNode.textContent='👤'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+                } else {
+                    av.textContent = '👤';
+                }
+            } catch (err) {
+                toast.err(`Failed to load profile: ${err.message}`);
+            }
+        }
+
+        document.getElementById('profile-load').addEventListener('click', loadProfile);
+
+        document.getElementById('profile-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const dname = document.getElementById('prof-dname').value.trim();
+            const avatar = document.getElementById('prof-avatar').value.trim();
+            const credRaw = document.getElementById('prof-credits-inp').value.trim();
+            const body = {};
+            if (dname) {
+                if (dname.length < 1 || dname.length > 50) { toast.err('Display name must be 1–50 characters.'); return; }
+                body.displayname = dname;
+            }
+            body.avatar = avatar; // empty string clears avatar
+            if (credRaw !== '') {
+                const credits = parseInt(credRaw);
+                if (isNaN(credits) || credits < 0) { toast.err('Credits must be a non-negative integer.'); return; }
+                body.credits = credits;
+            }
+            if (!body.displayname && body.avatar === undefined && body.credits === undefined) {
+                toast.wrn('Nothing to save.'); return;
+            }
+            const btn = document.getElementById('profile-save');
+            btn.disabled = true; btn.textContent = 'Saving…';
+            try {
+                const d = await api.patch('/me', body);
+                S.user = d.user;
+                store.set(SK.USER, S.user);
+                updateSidebarUser();
+                toast.ok('Profile updated!');
+                loadProfile();
+            } catch (err) {
+                toast.err(err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = '💾 Save';
+            }
+        });
+
+        // ── Admin ──────────────────────────────────────────────────────────
+        document.getElementById('toggle-token').addEventListener('click', () => {
+            const inp = document.getElementById('admin-token');
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+        });
+
+        document.getElementById('admin-credits-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const uid = parseInt(document.getElementById('adm-uid').value);
+            const amt = parseInt(document.getElementById('adm-amt').value);
+            const op = document.getElementById('adm-op').value;
+            const res = document.getElementById('adm-credits-result');
+            const btn = document.getElementById('adm-credits-btn');
+            if (!uid || isNaN(uid)) { toast.err('User ID is required.'); return; }
+            if (isNaN(amt) || amt < 0) { toast.err('Amount must be a non-negative integer.'); return; }
+            if (!adminToken()) { toast.err('Admin token is required.'); return; }
+            btn.disabled = true; btn.textContent = 'Applying…';
+            try {
+                const d = await api.adminPost('/admin/users/credits', { user_id: uid, amount: amt, operation: op });
+                res.classList.remove('hidden');
+                res.innerHTML = `<span style="color:var(--success);font-weight:700;">✅ Done.</span> User: <strong>${esc(d.user.username)}</strong> · Credits: <strong style="color:var(--warning);">⚡ ${d.user.credits}</strong>`;
+                toast.ok(`Credits updated for ${d.user.username}.`);
+            } catch (err) {
+                res.classList.remove('hidden');
+                res.innerHTML = `<span style="color:var(--danger);">❌ ${esc(err.message)}</span>`;
+                toast.err(err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = 'Apply Credits';
+            }
+        });
+
+        document.getElementById('adm-lookup-btn').addEventListener('click', async () => {
+            const uid = parseInt(document.getElementById('adm-lookup-id').value);
+            const res = document.getElementById('adm-lookup-result');
+            if (!uid || isNaN(uid)) { toast.err('Enter a valid User ID.'); return; }
+            if (!adminToken()) { toast.err('Admin token is required.'); return; }
+            res.classList.remove('hidden');
+            res.innerHTML = `<div class="loading" style="padding:10px;"><div class="spinner"></div> Looking up…</div>`;
+            try {
+                const d = await api.adminGet(`/admin/users/${uid}`);
+                const u = d.user;
+                res.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><span style="color:var(--muted);">ID:</span> <strong>${u.id}</strong></div>
+        <div><span style="color:var(--muted);">Username:</span> <strong>${esc(u.username)}</strong></div>
+        <div><span style="color:var(--muted);">Display Name:</span> ${esc(u.displayname)}</div>
+        <div><span style="color:var(--muted);">Email:</span> ${esc(u.email)}</div>
+        <div><span style="color:var(--muted);">Credits:</span> <strong style="color:var(--warning);">⚡ ${u.credits}</strong></div>
+        <div><span style="color:var(--muted);">Joined:</span> ${fmt(u.created_at)}</div>
+      </div>`;
+            } catch (err) {
+                res.innerHTML = `<span style="color:var(--danger);">❌ ${esc(err.message)}</span>`;
+            }
+        });
+
+        // ── Mobile sidebar ─────────────────────────────────────────────────
+        function checkMobile() {
+            const mobile = window.innerWidth <= 720;
+            document.getElementById('mob-bar').style.display = mobile ? 'flex' : 'none';
+        }
+        function closeMobileSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('mob-overlay').classList.remove('show');
+        }
+        document.getElementById('mob-menu').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('mob-overlay').classList.toggle('show');
+        });
+        document.getElementById('mob-overlay').addEventListener('click', closeMobileSidebar);
+        window.addEventListener('resize', checkMobile);
+
+        // ── Start ──────────────────────────────────────────────────────────
+        init();
+    </script>
+</body>
+
+</html>
