@@ -1,7 +1,7 @@
 # BunnyChat — Role-play AI Chat API
 
 A multi-user role-play AI chat API running on **[Bunny.net Edge Scripting](https://bunny.net?ref=u5whp75240)**,
-powered by **[OpenRouter](https://openrouter.ai/)** (multi-model with fallback) and **[Bunny.net libsql]**(https://bunny.net?ref=u5whp75240) database.
+powered by **[OpenRouter](https://openrouter.ai/)** (multi-model with fallback) and **[Bunny.net libsql](https://bunny.net?ref=u5whp75240)** database.
 
 <a href="https://bunny.net?ref=u5whp75240" rel="sponsored" target="_blank">
   <img src="https://i.ibb.co.com/Vc6sr05T/Enteprise-Grade-AD-1200-x-628-Dark.png" width="200" alt="Link to Bunny.net"/>
