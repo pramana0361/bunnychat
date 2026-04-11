@@ -14,9 +14,9 @@ powered by **[OpenRouter](https://openrouter.ai/)** (multi-model with fallback) 
 ---
 
 ⚠️ **Vibe Code Alert**<br>
-This project is intended solely as a Proof of Concept and Just for Fun. The code within this project is the result of Vibe Coding and reflects the Author’s limitations in the programming language used. As such, the implementation may not adhere to best practices or established development standards.
+This project is intended solely as a Proof of Concept and Just for Fun. Most of the code in this project is the result of Vibe Coding and reflects the author’s limitations in the programming language used. Consequently, the implementation may not adhere to best practices or established development standards.
 
-However, the concepts, features and workflows presented here are entirely the result of the Author’s own ideas and designs.
+However, the concepts, features and workflows presented here are entirely the result of the author’s own ideas and designs.
 
 Therefore, this project is not recommended for production use. It may contain bugs, exhibit an unstructured or inconsistent architecture, and its security and performance have not been thoroughly tested or validated.
 
