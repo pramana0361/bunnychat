@@ -16,7 +16,7 @@ powered by **[OpenRouter](https://openrouter.ai/)** (multi-model with fallback) 
 ⚠️ **Vibe Code Alert**<br>
 This project is intended solely as a Proof of Concept and Just for Fun. The code within this project is the result of Vibe Coding and reflects the Author’s limitations in the programming language used. As such, the implementation may not adhere to best practices or established development standards.
 
-However, the ideas, concepts, features, and workflows presented here are entirely the result of the Author’s knowledge and experience as an app developer.
+However, the concepts, features and workflows presented here are entirely the result of the Author’s own ideas and designs.
 
 Therefore, this project is not recommended for production use. It may contain bugs, exhibit an unstructured or inconsistent architecture, and its security and performance have not been thoroughly tested or validated.
 
@@ -1981,8 +1981,8 @@ POST /chat { message: "Tell me about Naruto's chakra" }
 - The AI ​​is too focused on its area of ​​specialization in conversation.
 - The AI is too rigid for its specific specialty, making it unsuitable for small talk, general/basic social chats, and even for casual conversation.
 - The AI does not know the current date, time, and basic human/social knowledge.
-- The AI does not store knowledge directly provided by users in conversations. He/she just remember it in the current chat session only.
-- The AI ​​lacks initiative to ask questions to the User, tell something about his/her day, what he/she knows, and other random things, so that the AI ​​becomes more human.
+- The AI does not store information / knowledge provided directly by the user during a conversation. It only retains the knowledge for the duration of that chat session.
+- The AI lacks the initiative to ask the user questions, talk about their day, share what it knows, and discuss other random topics, which makes it seem more human.
 
 Make system prompt adjustments for the AI or function calls to fix the issues and suit to your needs.
 
