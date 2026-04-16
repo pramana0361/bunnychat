@@ -1,3 +1,7 @@
+> *This repository is provided as an example/experimental project.*
+
+> *Feel free to copy, modify, and use any part of the code without restriction.*
+
 # BunnyChat — Role-play AI Chat API
 
 A multi-user role-play AI chat API running on **[Bunny.net Edge Scripting](https://bunny.net?ref=u5whp75240)**,
